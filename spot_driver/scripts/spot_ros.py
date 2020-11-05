@@ -67,8 +67,8 @@ class SpotROS():
             self.odom_twist_pub.publish(twist_odom_msg)
 
             # Odom #
-            twist_odom_msg = GetOdomFromState(state, self.spot_wrapper)
-            self.odom_pub.publish(twist_odom_msg)
+            # twist_odom_msg = GetOdomFromState(state, self.spot_wrapper)
+            # self.odom_pub.publish(twist_odom_msg)
 
             # Feet #
             foot_array_msg = GetFeetFromState(state, self.spot_wrapper)
