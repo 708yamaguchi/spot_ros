@@ -100,7 +100,8 @@ def getImageMsg(data, spot_wrapper):
                 child = frame_name
                 # print('frame_name:{}'.format(frame_name))
                 # if str(frame_name) == 'vision':
-                if 'vision' == frame_name:
+                # if 'vision' == frame_name:
+                if 'odom' == frame_name:
                     # print('  frame_name is vision')
 
                     geo_tform_inversed = SE3Pose.from_obj(transform.parent_tform_child).inverse()
@@ -361,7 +362,8 @@ def GetTFFromState(state, spot_wrapper):
                 child = frame_name
                 # print('frame_name:{}'.format(frame_name))
                 # if str(frame_name) == 'vision':
-                if 'vision' == frame_name:
+                # if 'vision' == frame_name:
+                if 'odom' == frame_name:
                     # print('  frame_name is vision')
 
                     geo_tform_inversed = SE3Pose.from_obj(transform.parent_tform_child).inverse()
