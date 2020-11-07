@@ -110,8 +110,9 @@ class SpotROS():
         metrics = self.spot_wrapper.metrics
         if metrics:
             metrics_msg = Metrics()
-            local_time = self.spot_wrapper.robotToLocalTime(metrics.timestamp)
-            metrics_msg.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+            # local_time = self.spot_wrapper.robotToLocalTime(metrics.timestamp)
+            # metrics_msg.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+            metrics_msg.header.stamp = rospy.Time.now()
 
             for metric in metrics.metrics:
                 if metric.label == "distance":

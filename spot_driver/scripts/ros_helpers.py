@@ -95,8 +95,9 @@ def getImageMsg(data, spot_wrapper, inverse_target_frame):
             try:
                 transform = data.shot.transforms_snapshot.child_to_parent_edge_map.get(frame_name)
                 new_tf = TransformStamped()
-                local_time = spot_wrapper.robotToLocalTime(data.shot.acquisition_time)
-                new_tf.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+                # local_time = spot_wrapper.robotToLocalTime(data.shot.acquisition_time)
+                # new_tf.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+                new_tf.header.stamp = rospy.Time.now()
                 parent = transform.parent_frame_name
                 child = frame_name
                 if inverse_target_frame == frame_name:
@@ -125,8 +126,10 @@ def getImageMsg(data, spot_wrapper, inverse_target_frame):
                 print('Error: {}'.format(e))
 
     image_msg = Image()
-    local_time = spot_wrapper.robotToLocalTime(data.shot.acquisition_time)
-    image_msg.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+    time_now = rospy.Time.now()
+    # local_time = spot_wrapper.robotToLocalTime(data.shot.acquisition_time)
+    # image_msg.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+    image_msg.header.stamp = time_now
     image_msg.header.frame_id = data.shot.frame_name_image_sensor
     image_msg.height = data.shot.image.rows
     image_msg.width = data.shot.image.cols
@@ -170,8 +173,9 @@ def getImageMsg(data, spot_wrapper, inverse_target_frame):
             image_msg.data = data.shot.image.data
 
     camera_info_msg = DefaultCameraInfo()
-    local_time = spot_wrapper.robotToLocalTime(data.shot.acquisition_time)
-    camera_info_msg.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+    # local_time = spot_wrapper.robotToLocalTime(data.shot.acquisition_time)
+    # camera_info_msg.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+    camera_info_msg.header.stamp = time_now
     camera_info_msg.header.frame_id = data.shot.frame_name_image_sensor
     camera_info_msg.height = data.shot.image.rows
     camera_info_msg.width = data.shot.image.cols
@@ -198,8 +202,9 @@ def GetJointStatesFromState(state, spot_wrapper):
         JointState message
     """
     joint_state = JointState()
-    local_time = spot_wrapper.robotToLocalTime(state.kinematic_state.acquisition_timestamp)
-    joint_state.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+    # local_time = spot_wrapper.robotToLocalTime(state.kinematic_state.acquisition_timestamp)
+    # joint_state.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+    joint_state.header.stamp = rospy.Time.now()
     for joint in state.kinematic_state.joint_states:
         joint_state.name.append(friendly_joint_names.get(joint.name, "ERROR"))
         joint_state.position.append(joint.position.value)
@@ -220,8 +225,9 @@ def GetEStopStateFromState(state, spot_wrapper):
     estop_array_msg = EStopStateArray()
     for estop in state.estop_states:
         estop_msg = EStopState()
-        local_time = spot_wrapper.robotToLocalTime(estop.timestamp)
-        estop_msg.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+        # local_time = spot_wrapper.robotToLocalTime(estop.timestamp)
+        # estop_msg.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+        estop_msg.header.stamp = rospy.Time.now()
         estop_msg.name = estop.name
         estop_msg.type = estop.type
         estop_msg.state = estop.state
@@ -259,8 +265,9 @@ def GetOdomTwistFromState(state, spot_wrapper):
         TwistWithCovarianceStamped message
     """
     twist_odom_msg = TwistWithCovarianceStamped()
-    local_time = spot_wrapper.robotToLocalTime(state.kinematic_state.acquisition_timestamp)
-    twist_odom_msg.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+    # local_time = spot_wrapper.robotToLocalTime(state.kinematic_state.acquisition_timestamp)
+    # twist_odom_msg.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+    twist_odom_msg.header.stamp = rospy.Time.now()
     twist_odom_msg.twist.twist.linear.x = state.kinematic_state.velocity_of_body_in_odom.linear.x
     twist_odom_msg.twist.twist.linear.y = state.kinematic_state.velocity_of_body_in_odom.linear.y
     twist_odom_msg.twist.twist.linear.z = state.kinematic_state.velocity_of_body_in_odom.linear.z
@@ -279,8 +286,9 @@ def GetOdomFromState(state, spot_wrapper, use_vision=True):
         Odometry message
     """
     odom_msg = Odometry()
-    local_time = spot_wrapper.robotToLocalTime(state.kinematic_state.acquisition_timestamp)
-    odom_msg.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+    # local_time = spot_wrapper.robotToLocalTime(state.kinematic_state.acquisition_timestamp)
+    # odom_msg.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+    odom_msg.header.stamp = rospy.Time.now()
     if use_vision == True:
         odom_msg.header.frame_id = 'vision'
         tform_body = get_vision_tform_body(state.kinematic_state.transforms_snapshot)
@@ -334,8 +342,9 @@ def GetTFFromState(state, spot_wrapper, inverse_target_frame):
             try:
                 transform = state.kinematic_state.transforms_snapshot.child_to_parent_edge_map.get(frame_name)
                 new_tf = TransformStamped()
-                local_time = spot_wrapper.robotToLocalTime(state.kinematic_state.acquisition_timestamp)
-                new_tf.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+                # local_time = spot_wrapper.robotToLocalTime(state.kinematic_state.acquisition_timestamp)
+                # new_tf.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+                new_tf.header.stamp = rospy.Time.now()
                 if inverse_target_frame == frame_name:
                     geo_tform_inversed = SE3Pose.from_obj(transform.parent_tform_child).inverse()
                     new_tf.header.frame_id = frame_name
@@ -375,8 +384,9 @@ def GetBatteryStatesFromState(state, spot_wrapper):
     battery_states_array_msg = BatteryStateArray()
     for battery in state.battery_states:
         battery_msg = BatteryState()
-        local_time = spot_wrapper.robotToLocalTime(battery.timestamp)
-        battery_msg.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+        # local_time = spot_wrapper.robotToLocalTime(battery.timestamp)
+        # battery_msg.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+        battery_msg.header.stamp = rospy.Time.now()
 
         battery_msg.identifier = battery.identifier
         battery_msg.charge_percentage = battery.charge_percentage.value
@@ -400,8 +410,9 @@ def GetPowerStatesFromState(state, spot_wrapper):
         PowerState message
     """
     power_state_msg = PowerState()
-    local_time = spot_wrapper.robotToLocalTime(state.power_state.timestamp)
-    power_state_msg.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+    # local_time = spot_wrapper.robotToLocalTime(state.power_state.timestamp)
+    # power_state_msg.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+    power_state_msg.header.stamp = rospy.Time.now()
     power_state_msg.motor_power_state = state.power_state.motor_power_state
     power_state_msg.shore_power_state = state.power_state.shore_power_state
     power_state_msg.locomotion_charge_percentage = state.power_state.locomotion_charge_percentage.value
@@ -422,8 +433,9 @@ def getBehaviorFaults(behavior_faults, spot_wrapper):
     for fault in behavior_faults:
         new_fault = BehaviorFault()
         new_fault.behavior_fault_id = fault.behavior_fault_id
-        local_time = spot_wrapper.robotToLocalTime(fault.onset_timestamp)
-        new_fault.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+        # local_time = spot_wrapper.robotToLocalTime(fault.onset_timestamp)
+        # new_fault.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+        new_fault.header.stamp = rospy.Time.now()
         new_fault.cause = fault.cause
         new_fault.status = fault.status
         faults.append(new_fault)
@@ -444,8 +456,9 @@ def getSystemFaults(system_faults, spot_wrapper):
     for fault in system_faults:
         new_fault = SystemFault()
         new_fault.name = fault.name
-        local_time = spot_wrapper.robotToLocalTime(fault.onset_timestamp)
-        new_fault.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+        # local_time = spot_wrapper.robotToLocalTime(fault.onset_timestamp)
+        # new_fault.header.stamp = rospy.Time(local_time.seconds, local_time.nanos)
+        new_fault.header.stamp = rospy.Time.now()
         new_fault.duration = rospy.Time(fault.duration.seconds, fault.duration.nanos)
         new_fault.code = fault.code
         new_fault.uid = fault.uid
